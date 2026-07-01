@@ -5,6 +5,11 @@
 //!
 //! Attendance tracking, payroll calculation, paid leave management,
 //! shift scheduling, performance evaluation, and employee records.
+//! v1.1 で `signed_payroll` module (Ed25519 署名 + hash chain payroll audit)
+//! を追加。
+
+pub mod signed_payroll;
+pub use signed_payroll::{PayrollEventKind, PayrollRecord, PayrollTrail, SignedPayrollRecord};
 
 use std::collections::HashMap;
 
@@ -1163,7 +1168,7 @@ mod tests {
         let mut ev = Evaluation::new(1, "2026Q1");
         ev.add_kpi(Kpi::new("Sales", 100.0, 80.0, 0.6));
         ev.add_kpi(Kpi::new("Quality", 100.0, 120.0, 0.4));
-        let expected = (0.8 * 0.6 + 1.2 * 0.4) / 1.0;
+        let expected = 0.8_f64.mul_add(0.6, 1.2 * 0.4);
         assert!((ev.composite_score() - expected).abs() < 0.001);
     }
 
@@ -1245,7 +1250,7 @@ mod tests {
         let removed = sys.remove_employee(1);
         assert!(removed.is_some());
         assert!(sys.get_employee(1).is_none());
-        assert!(sys.leave_balances.get(&1).is_none());
+        assert!(!sys.leave_balances.contains_key(&1));
     }
 
     #[test]
