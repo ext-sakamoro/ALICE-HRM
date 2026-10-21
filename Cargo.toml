@@ -10,4 +10,4 @@ description = "ALICE Human Resource Management — attendance, payroll, leave, s
 crate-type = ["rlib"]
 
 [dependencies]
-alice-blockchain = { path = "../ALICE-Blockchain" }
+alice-sign = { version = "0.1", git = "https://github.com/ext-sakamoro/ALICE-Sign", rev = "5420e71fbbf47dd1202b6abcb3c885ef3aa176ca" }
